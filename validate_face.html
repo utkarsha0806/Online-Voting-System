@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face Validation</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h2>Face Validation</h2>
+    <video id="video" width="640" height="480" autoplay></video>
+    <button id="capture">Capture Face</button>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <input type="hidden" id="imageData" name="imageData">
+    <button id="submit">Validate</button>
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h2>Registered Person</h2>
+    <img id="displayImage" src="" alt="Image" width="300">
+    <script>
+        var stm = {{entries[0][2]}}
+        var imageFilename = 'captured_face_'+ stm + '.png';  // Replace with your image filename
+        var imageUrl = '/get_image/' + imageFilename;
+
+        // Access the image element by its ID
+        var imgElement = document.getElementById('displayImage');
+
+        // Set the image source to the Flask route URL
+        imgElement.src = imageUrl;
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                var video = document.getElementById('video');
+                video.srcObject = stream;
+            })
+            .catch(function (err) {
+                console.log("An error occurred: " + err);
+            });
+
+        document.getElementById('capture').addEventListener('click', function () {
+            var video = document.getElementById('video');
+            var canvas = document.getElementById('canvas');
+            var context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Set the image data in the hidden input field
+            document.getElementById('imageData').value = canvas.toDataURL('image/png');
+        });
+
+        document.getElementById('submit').addEventListener('click', async function () {
+            var canvas = document.getElementById('canvas');
+            var imageData = canvas.toDataURL('image/png');
+        
+            // Convert base64 image data to a Blob object
+            var byteString = atob(imageData.split(',')[1]);
+            var mimeString = imageData.split(',')[0].split(':')[1].split(';')[0];
+            var arrayBuffer = new ArrayBuffer(byteString.length);
+            var uint8Array = new Uint8Array(arrayBuffer);
+        
+            for (var i = 0; i < byteString.length; i++) {
+                uint8Array[i] = byteString.charCodeAt(i);
+            }
+        
+            var blob = new Blob([arrayBuffer], { type: mimeString });
+        
+            // Use face-api.js for face detection
+            //await faceapi.nets.tinyFaceDetector.loadFromUri('/models');
+            //const img = await faceapi.bufferToImage(blob);
+            //const detections = await faceapi.detectAllFaces(img).withFaceLandmarks().withFaceDescriptors();
+        
+            // Get the image URL from the Flask server
+            var stm = {{ entries[0][2] }};
+            var imageFilename = 'captured_face_' + stm + '.png';
+            var imageUrl = '/get_image/' + imageFilename;
+        
+            // Fetch the image from the Flask server for comparison
+            const response = await fetch(imageUrl);
+            const blob2 = await response.blob();
+        
+            // Compare the two images
+            var formData = new FormData();
+            formData.append('imageData', blob);
+            formData.append('referenceImage', blob2);
+        
+            // Use Axios to send the captured and reference images to the server for validation
+            axios.post('/compare_faces', formData)
+                .then(function (response) {
+                    var msg = response.data
+                    alert('Face comparison result: ' + msg);
+                    if (msg = "Faces match") window.location.href = '/vote';
+                })
+                .catch(function (error) {
+                    console.error('Error comparing faces:', error);
+                });
+        });
+        
+    </script>
+</body>
+</html>

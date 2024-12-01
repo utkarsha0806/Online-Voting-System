@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Machine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .voting-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .candidates-container{
+            display: grid;
+            grid-template-columns: auto;
+        }
+        .candidate{
+            display: grid;            
+            grid-template-columns: 30% 60% 10%;
+            align-items: center;
+            background-color: rgba(128, 128, 128, 0.2);
+            border: 4px solid rgba(128, 128, 128, 0.2);
+            padding: 10px 10px;
+        }
+        .icon-container{
+            padding: 20px;
+            display: flex;
+            width: 100px; /* Adjust width and height as needed */
+            height: 100px;
+            overflow: hidden; /* Hides anything outside the container */
+            border-radius: 50%;
+            background-color: #ccc;
+        }
+
+        .circular-crop {
+            width: 140px; /* Fills the container */
+            margin-left: -20px;
+            margin-top: -20px;
+            height: 140px;
+            display: block;
+            border-radius: 50%; /* Makes the image itself circular */
+            object-fit: cover; /* Ensures the image fits within the container */
+        }
+
+        .circular-crop1 {
+            margin-left: -20px;
+            margin-top: -20px;
+            width: 140px; /* Fills the container */
+            height: 140px;
+            display: block;
+            object-fit: cover; /* Ensures the image fits within the container */
+        }
+        .circular-crop2 {
+            width: 200px; /* Fills the container */
+            height: 200px;
+            display: block;
+            margin-top: -50px;
+            margin-left: -50px;
+            object-fit: cover; /* Ensures the image fits within the container */
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            color: #555;
+        }
+
+        input[type="radio"] {
+            transform: scale(3); /* Make the radio buttons larger */
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="voting-container">
+        <h1>Vote for Your Favorite Candidate</h1>
+        <h2>Choose wisely for a better future!</h2>
+        <form action="/voted" method="post">    
+        <div class="candidates-container">
+            <div class="candidate">
+                <div class="icon-container">
+                    <img class="circular-crop1" src="{{ url_for('static', filename='bjpicon.png') }}" alt="BJP Icon">
+                </div>
+                <div>
+                    <label style="font-size: 30px;" for="bjp">Bhartiya Janta Party</label>
+                </div>
+                <div>
+                    <input type="radio" name="candidate" id="bjp" value="BJP">
+                </div>
+            </div>
+            <br>
+            <div class="candidate">
+                <div class="icon-container">
+                    <img class="circular-crop" src="{{ url_for('static', filename='conicon.png') }}" alt="CON Icon">
+                </div>
+                <div>
+                    <label style="font-size: 30px;" for="con">Congress Party</label>
+                </div>
+                <div>
+                    <input type="radio" name="candidate" id="con" value="CON">
+                </div>
+            </div>
+            <br>
+            <div class="candidate">
+                <div class="icon-container">
+                    <img class="circular-crop2" src="{{ url_for('static', filename='aapicon.png') }}" alt="AAP Icon">
+                </div>
+                <div>
+                    <label style="font-size: 30px;" for="aap">Aam Aadmi Party</label>
+                </div>
+                <div>
+                    <input type="radio" name="candidate" id="aap" value="AAP">
+                </div>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button type="submit">Vote Now</button>
+        </div>
+    </form>    
+    </div>
+</body>
+</html>
